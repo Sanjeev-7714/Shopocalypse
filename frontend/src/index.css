@@ -1,8 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Prata&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind directives */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
 
 /* Gradient background */
 .gradient-bg {
@@ -93,5 +94,70 @@ a.active hr{
     a.active{
         background-color: black;
         color: white;
+    }
+}
+
+/* Responsive styles for 6.1-6.7 inch mobile devices (390px-428px) */
+@media (min-width: 390px) and (max-width: 428px) {
+    /* Improved text sizing for better readability */
+    h1.text-3xl {
+        font-size: 1.75rem; /* Slightly smaller than default text-3xl */
+    }
+    
+    /* Adjust padding for better spacing */
+    .px-4 {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    /* Improve touch targets for better usability */
+    button, a {
+        min-height: 44px; /* Apple's recommended minimum touch target size */
+        display: inline-flex;
+        align-items: center;
+    }
+    
+    /* Adjust spacing in mobile menu for better touch targets */
+    .py-3 {
+        padding-top: 0.85rem;
+        padding-bottom: 0.85rem;
+    }
+    
+    /* Improve form elements for better mobile experience */
+    input, select, textarea {
+        font-size: 16px; /* Prevents iOS zoom on focus */
+    }
+    
+    /* Improve grid layouts for product listings */
+    .grid-cols-2 {
+        gap: 0.75rem;
+    }
+    
+    /* Adjust card components for better mobile display */
+    .rounded-lg {
+        border-radius: 0.5rem;
+    }
+    
+    /* Improve readability of small text */
+    .text-xs {
+        font-size: 0.75rem;
+        line-height: 1.25rem;
+    }
+    
+    /* Adjust button sizes for better touch targets */
+    .px-4.py-2 {
+        padding: 0.6rem 1rem;
+    }
+    
+    /* Improve spacing between sections */
+    .my-8 {
+        margin-top: 1.75rem;
+        margin-bottom: 1.75rem;
+    }
+    
+    /* Optimize images for mobile */
+    img {
+        max-width: 100%;
+        height: auto;
     }
 }
