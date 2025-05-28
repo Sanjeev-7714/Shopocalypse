@@ -2,10 +2,14 @@ import React, { useContext, useState, useEffect } from 'react'
 import { assets } from '../assets/assets'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext';
+import axios from 'axios';
 
 const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } = useContext(ShopContext);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [profileData, setProfileData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems, backendUrl } = useContext(ShopContext);
 
   // Close mobile menu when screen size changes to desktop
   useEffect(() => {
@@ -32,11 +36,35 @@ const Navbar = () => {
     };
   }, [mobileMenuOpen]);
 
+  // Fetch profile data when profile modal is opened
+  const fetchProfileData = async () => {
+    if (!token) return;
+    
+    setLoading(true);
+    try {
+      // Using the correct API endpoint structure and token format
+      const response = await axios.get(`${backendUrl}/api/user/profile`, {
+        headers: { token }
+      });
+      setProfileData(response.data);
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProfileClick = () => {
+    setShowProfileModal(true);
+    fetchProfileData();
+  };
+
   const logout = () => {
     navigate('/login')
     localStorage.removeItem('token')
     setToken('')
     setCartItems({})
+    setShowProfileModal(false)
   }
 
   return (
@@ -102,12 +130,7 @@ const Navbar = () => {
             {token && (
               <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-50'>
                 <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-white shadow-lg text-gray-600 rounded-lg scale-in'>
-                  <p onClick={() => navigate('/profile')} className='cursor-pointer hover:text-gray-900 transition-all duration-300 flex items-center gap-1'>
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    My Profile
-                  </p>
+                  <p onClick={handleProfileClick} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>My Profile</p>
                   <p onClick={() => navigate('/orders')} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>Orders</p>
                   <p onClick={logout} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>Logout</p>
                 </div>
@@ -244,6 +267,102 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+      {/* Profile Modal */}
+      {showProfileModal && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
+          <div 
+            className="bg-white rounded-lg shadow-xl w-full max-w-md overflow-hidden scale-in" 
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-gray-800 to-gray-600 px-6 py-4 flex justify-between items-center">
+              <h2 className="text-xl font-bold text-white">My Profile</h2>
+              <button 
+                onClick={() => setShowProfileModal(false)}
+                className="text-white hover:text-gray-200 focus:outline-none"
+                aria-label="Close profile"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Modal Content */}
+            <div className="p-6">
+              {loading ? (
+                <div className="flex flex-col items-center justify-center py-8">
+                  <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-800 mb-4"></div>
+                  <p className="text-lg">Loading profile information...</p>
+                </div>
+              ) : profileData ? (
+                <div className="space-y-6">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Full Name</h3>
+                      <p className="text-lg font-medium">{profileData.name}</p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Email Address</h3>
+                      <p className="text-lg font-medium">{profileData.email}</p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Phone Number</h3>
+                      <p className="text-lg font-medium">{profileData.phone || 'Not provided'}</p>
+                    </div>
+
+                    <div>
+                      <h3 className="text-sm font-medium text-gray-500">Account Created</h3>
+                      <p className="text-lg font-medium">
+                        {profileData.createdAt ? new Date(profileData.createdAt).toLocaleDateString() : 'N/A'}
+                      </p>
+                    </div>
+                    
+                    {profileData.address && (
+                      <div>
+                        <h3 className="text-sm font-medium text-gray-500">Default Shipping Address</h3>
+                        <p className="text-lg font-medium">
+                          {profileData.address.street}, {profileData.address.city}, {profileData.address.state} {profileData.address.zipCode}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="pt-4 border-t border-gray-200 flex justify-between">
+                    <button 
+                      onClick={() => {
+                        setShowProfileModal(false);
+                        navigate('/profile');
+                      }}
+                      className="px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-600 text-white rounded-md hover:from-gray-700 hover:to-gray-500 transition-all duration-300"
+                    >
+                      View Full Profile
+                    </button>
+                    <button 
+                      onClick={() => setShowProfileModal(false)}
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100 transition-all duration-300"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <p className="text-lg text-gray-600 mb-4">Unable to load profile information</p>
+                  <button 
+                    onClick={() => navigate('/profile')}
+                    className="px-4 py-2 bg-gradient-to-r from-gray-800 to-gray-600 text-white rounded-md hover:from-gray-700 hover:to-gray-500 transition-all duration-300"
+                  >
+                    Go to Profile Page
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

@@ -17,8 +17,9 @@ const Profile = () => {
       }
 
       try {
-        const response = await axios.get('http://localhost:4000/user/profile', {
-          headers: { Authorization: `Bearer ${token}` }
+        // Updated to use the correct API endpoint structure and token format
+        const response = await axios.get('http://localhost:4000/api/user/profile', {
+          headers: { token }
         });
         setProfile(response.data);
         setLoading(false);
