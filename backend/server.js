@@ -23,8 +23,8 @@ const allowedOrigins = [
     'http://localhost:5173',  // Vite default for frontend
     'http://localhost:5174',  // Potential port for admin
     // Vercel deployment origins (update these with your actual Vercel domains once deployed)
-    'https://shopocalypse-frontend.vercel.app',
-    'https://shopocalypse-admin.vercel.app',
+    'https://shopocalypse.vercel.app/',
+    'https://shopocalypse-6xze.vercel.app/',
     // Add any other domains you might deploy to
 ];
 
