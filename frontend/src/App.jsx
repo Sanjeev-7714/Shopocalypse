@@ -28,8 +28,12 @@ const App = () => {
   }, []);
 
   return (
-    <div className='gradient-bg min-h-screen px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] text-gray-800'>
+    <>
+      {/* Show loading screen when backend is not ready */}
       {(!isBackendReady && isCheckingBackend) && <LoadingScreen />}
+      
+      {/* Only render the main app when backend is ready or we're done checking */}
+      <div className='gradient-bg min-h-screen px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] text-gray-800'>
       <ToastContainer 
         position="top-right"
         autoClose={3000}
@@ -63,6 +67,7 @@ const App = () => {
       </div>
       <Footer />
     </div>
+    </>
   )
 }
 
