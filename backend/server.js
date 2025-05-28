@@ -24,7 +24,7 @@ const allowedOrigins = [
     'http://localhost:5174',  // Potential port for admin
     // Vercel deployment origins (update these with your actual Vercel domains once deployed)
     'https://shopocalypse.vercel.app/',
-    'https://shopocalypse-6xze.vercel.app/',
+    'https://shopocalypse-t9g9.vercel.app/',
     // Add any other domains you might deploy to
 ];
 
