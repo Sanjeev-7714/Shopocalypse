@@ -43,7 +43,7 @@ const Contact = () => {
 
     // Prepare template parameters
     const templateParams = {
-      name: formData.name,
+      from_name: formData.name,
       from_email: formData.email,
       message: formData.message,
       reply_to: formData.email
