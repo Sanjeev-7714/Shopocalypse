@@ -16,7 +16,31 @@ connectCloudinary()
 
 // middlewares
 app.use(express.json())
-app.use(cors())
+
+// CORS configuration for production and development
+const allowedOrigins = [
+    // Local development origins
+    'http://localhost:5173',  // Vite default for frontend
+    'http://localhost:5174',  // Potential port for admin
+    // Vercel deployment origins (update these with your actual Vercel domains once deployed)
+    'https://shopocalypse-frontend.vercel.app',
+    'https://shopocalypse-admin.vercel.app',
+    // Add any other domains you might deploy to
+];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps, curl requests, etc)
+        if (!origin) return callback(null, true);
+        
+        if (allowedOrigins.indexOf(origin) === -1) {
+            const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+            return callback(new Error(msg), false);
+        }
+        return callback(null, true);
+    },
+    credentials: true // Allow cookies and credentials to be sent
+}))
 
 // api endpoints
 app.use('/api/user',userRouter)
