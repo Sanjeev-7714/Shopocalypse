@@ -102,7 +102,12 @@ const Navbar = () => {
             {token && (
               <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4 z-50'>
                 <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-white shadow-lg text-gray-600 rounded-lg scale-in'>
-                  <p onClick={() => navigate('/profile')} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>My Profile</p>
+                  <p onClick={() => navigate('/profile')} className='cursor-pointer hover:text-gray-900 transition-all duration-300 flex items-center gap-1'>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    My Profile
+                  </p>
                   <p onClick={() => navigate('/orders')} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>Orders</p>
                   <p onClick={logout} className='cursor-pointer hover:text-gray-900 transition-all duration-300'>Logout</p>
                 </div>
