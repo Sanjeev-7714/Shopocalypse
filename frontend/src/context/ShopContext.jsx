@@ -15,6 +15,8 @@ const ShopContextProvider = (props) => {
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([]);
     const [token, setToken] = useState('')
+    const [isBackendReady, setIsBackendReady] = useState(false);
+    const [isCheckingBackend, setIsCheckingBackend] = useState(true);
     const navigate = useNavigate();
 
 
@@ -151,8 +153,27 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    // Check if backend server is ready
+    const checkBackendStatus = async () => {
+        setIsCheckingBackend(true);
+        try {
+            const response = await axios.get(`${backendUrl}/api/product/list`, { timeout: 5000 });
+            if (response.status === 200) {
+                setIsBackendReady(true);
+                setProducts(response.data.products?.reverse() || []);
+            } else {
+                setTimeout(checkBackendStatus, 3000); // Retry after 3 seconds
+            }
+        } catch (error) {
+            console.log('Backend not ready yet, retrying in 3 seconds...');
+            setTimeout(checkBackendStatus, 3000); // Retry after 3 seconds
+        } finally {
+            setIsCheckingBackend(false);
+        }
+    };
+
     useEffect(() => {
-        getProductsData()
+        checkBackendStatus();
     }, [])
 
     useEffect(() => {
@@ -168,10 +189,11 @@ const ShopContextProvider = (props) => {
     const value = {
         products, currency, delivery_fee,
         search, setSearch, showSearch, setShowSearch,
-        cartItems, addToCart,setCartItems,
+        cartItems, addToCart, setCartItems,
         getCartCount, updateQuantity,
         getCartAmount, navigate, backendUrl,
-        setToken, token
+        setToken, token, isBackendReady, isCheckingBackend,
+        checkBackendStatus
     }
 
     return (

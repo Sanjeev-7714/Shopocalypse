@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import Collection from './pages/Collection'
@@ -13,11 +13,15 @@ import Profile from './pages/Profile'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import SearchBar from './components/SearchBar'
+import LoadingScreen from './components/LoadingScreen'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Verify from './pages/Verify'
+import { ShopContext } from './context/ShopContext'
 
 const App = () => {
+  const { isBackendReady, isCheckingBackend } = useContext(ShopContext);
+  
   // Add AOS-like scroll reveal effect for route transitions
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,6 +29,7 @@ const App = () => {
 
   return (
     <div className='gradient-bg min-h-screen px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw] text-gray-800'>
+      {(!isBackendReady && isCheckingBackend) && <LoadingScreen />}
       <ToastContainer 
         position="top-right"
         autoClose={3000}
